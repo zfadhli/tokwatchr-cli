@@ -31,7 +31,7 @@
   "dependencies": {
     "cac": "^7.0.0",
     "picocolors": "^1.1.1",
-    "tokwatchr": "^0.6.2"
+    "tokwatchr": "^0.6.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
