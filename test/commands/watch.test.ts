@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { executeWatch, registerSigintHandler } from "../../src/commands/watch";
+import { executeWatch } from "../../src/commands/watch";
+import { registerSigintHandler } from "../../src/utils/active-downloader";
 
 describe("executeWatch", () => {
   it("is a function", () => {

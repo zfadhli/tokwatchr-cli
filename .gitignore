@@ -1,7 +1,6 @@
 node_modules/
 dist/
-# graphify-out tracked — knowledge graph for AI context
-graphify-out/cache/
+graphify-out/
 *.tsbuildinfo
 .env
 .env.local

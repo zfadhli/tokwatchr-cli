@@ -2,24 +2,8 @@ import { color, spinner } from "kowu-cli";
 import { TikTokLiveDownloader } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
+import { setActiveDownloader } from "../utils/active-downloader";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
-
-/** Shared reference so SIGINT can call `.stop()` */
-let activeDownloader: TikTokLiveDownloader | null = null;
-
-/**
- * Register a global SIGINT handler that gracefully stops
- * an active TikTokLiveDownloader. The manual spinner will
- * persist during cleanup.
- */
-export function registerSigintHandler(): void {
-  process.on("SIGINT", async () => {
-    if (activeDownloader) {
-      await activeDownloader.stop();
-    }
-    process.exit(0);
-  });
-}
 
 /**
  * Execute the `watch` command.
@@ -27,6 +11,9 @@ export function registerSigintHandler(): void {
  * Uses tokwatchr's `TikTokLiveDownloader` with a manual ora spinner.
  * The spinner transitions through phases:
  *   "Waiting for {username}..."  →  "Recording..."  →  success/fail
+ *
+ * On SIGINT, the shared `active-downloader` handler calls `stop()`,
+ * which remuxes any pending segment before exit.
  */
 export async function executeWatch(username: string, options: WatchCliOptions): Promise<void> {
   const s = spinner(`Waiting for ${username} to go live...`).start();
@@ -48,7 +35,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     },
   });
 
-  activeDownloader = downloader;
+  setActiveDownloader(downloader);
 
   try {
     const result: DownloadResult = await downloader.start();
@@ -60,6 +47,6 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     s.fail(String(error));
     throw error;
   } finally {
-    activeDownloader = null;
+    setActiveDownloader(null);
   }
 }

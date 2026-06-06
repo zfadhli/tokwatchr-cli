@@ -2,7 +2,8 @@
 
 import { program } from "kowu-cli";
 import { executeDownload } from "./commands/download";
-import { executeWatch, registerSigintHandler } from "./commands/watch";
+import { executeWatch } from "./commands/watch";
+import { registerSigintHandler } from "./utils/active-downloader";
 import type { DownloadCliOptions, WatchCliOptions } from "./types";
 import { handleFatalError } from "./utils/errors";
 
