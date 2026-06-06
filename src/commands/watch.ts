@@ -30,9 +30,9 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     format: options.format,
     proxyUrl: options.proxy,
     useFfmpeg: options.ffmpeg,
-    maxDuration: options.maxDuration,
-    maxSegmentDuration: options.segmentDuration,
-    checkInterval: options.interval,
+    maxDuration: options.maxDuration ? options.maxDuration * 60 : undefined,
+    maxSegmentDuration: options.segmentDuration ? options.segmentDuration * 60 : undefined,
+    checkInterval: options.interval ? options.interval * 60_000 : undefined,
   });
 
   // ─── Wire events ───────────────────────────────────────
