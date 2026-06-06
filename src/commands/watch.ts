@@ -1,4 +1,5 @@
-import { color, spinner } from "kowu-cli";
+import pc from "picocolors";
+import ora from "ora";
 import { TikTokLiveDownloader } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
@@ -38,7 +39,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     checkInterval: options.interval,
   });
 
-  const s = spinner(`Waiting for ${username} to go live...`).start();
+  const s = ora(`Waiting for ${username} to go live...`).start();
 
   // ─── Wire events ───────────────────────────────────────
 
@@ -52,14 +53,14 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
 
   downloader.on("segment", (result: DownloadResult, partNum: number) => {
     console.log(
-      `  ${color.green("Segment")} ${partNum}: ${result.filePath}  ${color.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
+      `  ${pc.green("Segment")} ${partNum}: ${result.filePath}  ${pc.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
     );
   });
 
   downloader.on("complete", (results: DownloadResult[]) => {
     for (const r of results) {
       console.log(
-        `  ${color.green("Saved:")} ${r.filePath}  ${color.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
+        `  ${pc.green("Saved:")} ${r.filePath}  ${pc.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
       );
     }
     const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);

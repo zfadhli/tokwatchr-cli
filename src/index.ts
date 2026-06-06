@@ -1,6 +1,6 @@
 #! /usr/bin/env bun
 
-import { program } from "kowu-cli";
+import { cac } from "cac";
 import { executeDownload } from "./commands/download";
 import { executeWatch } from "./commands/watch";
 import type { DownloadCliOptions, WatchCliOptions } from "./types";
@@ -9,7 +9,7 @@ import { handleFatalError } from "./utils/errors";
 // -------------------------------------------------------
 // Program
 // -------------------------------------------------------
-const cli = program("tokwatchr");
+const cli = cac("tokwatchr");
 
 // -------------------------------------------------------
 // download  —  one-shot fire-and-forget

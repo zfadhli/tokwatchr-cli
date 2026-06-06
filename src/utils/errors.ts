@@ -1,4 +1,4 @@
-import { logger } from "kowu-cli";
+import pc from "picocolors";
 
 /**
  * Base error for all CLI-level failures.
@@ -34,7 +34,7 @@ export class ConfigError extends CliError {
  */
 export function handleFatalError(error: unknown): never {
   if (error instanceof CliError) {
-    logger.error(error.message);
+    console.error(pc.red("✖"), error.message);
     process.exit(1);
   }
 
@@ -42,32 +42,38 @@ export function handleFatalError(error: unknown): never {
   if (error instanceof Error) {
     switch (error.name) {
       case "UserOfflineError":
-        logger.error("User is not live. Use `watch` to wait for them to go live.");
+        console.error(pc.red("✖"), "User is not live. Use `watch` to wait for them to go live.");
         break;
       case "RoomResolveError":
-        logger.error("Could not find the user's livestream room.");
+        console.error(pc.red("✖"), "Could not find the user's livestream room.");
         break;
       case "StreamFetchError":
-        logger.error("Could not fetch stream info. Check the username and try again.");
+        console.error(
+          pc.red("✖"),
+          "Could not fetch stream info. Check the username and try again.",
+        );
         break;
       case "DownloadFailedError":
-        logger.error(`Download failed: ${error.message}`);
+        console.error(pc.red("✖"), `Download failed: ${error.message}`);
         break;
       case "FfmpegError":
-        logger.error(`ffmpeg error: ${error.message}. Install ffmpeg or use --no-ffmpeg.`);
+        console.error(
+          pc.red("✖"),
+          `ffmpeg error: ${error.message}. Install ffmpeg or use --no-ffmpeg.`,
+        );
         break;
       case "AbortError":
-        logger.info("Aborted.");
+        console.error(pc.blue("ℹ"), "Aborted.");
         break;
       default:
-        logger.error(`Unexpected error: ${error.message}`);
+        console.error(pc.red("✖"), `Unexpected error: ${error.message}`);
         if (process.env.DEBUG) {
           console.error(error.stack);
         }
         break;
     }
   } else {
-    logger.error(String(error));
+    console.error(pc.red("✖"), String(error));
   }
 
   process.exit(1);

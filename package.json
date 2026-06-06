@@ -29,7 +29,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "kowu-cli": "^0.13.1",
+    "cac": "^7.0.0",
+    "ora": "^9.4.0",
+    "picocolors": "^1.1.1",
     "tokwatchr": "github:zfadhli/tokwatchr"
   },
   "devDependencies": {

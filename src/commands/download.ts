@@ -1,4 +1,5 @@
-import { color, spinner } from "kowu-cli";
+import pc from "picocolors";
+import ora from "ora";
 import { TikTokLiveDownloader, UserOfflineError } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
@@ -38,7 +39,7 @@ export async function executeDownload(
     useFfmpeg: options.ffmpeg,
   });
 
-  const s = spinner("Resolving room...").start();
+  const s = ora("Resolving room...").start();
 
   // ─── Wire events ───────────────────────────────────────
 
@@ -53,7 +54,7 @@ export async function executeDownload(
   downloader.on("complete", (results: DownloadResult[]) => {
     for (const r of results) {
       console.log(
-        `  ${color.green("Saved:")} ${r.filePath}  ${color.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
+        `  ${pc.green("Saved:")} ${r.filePath}  ${pc.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
       );
     }
     const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);
