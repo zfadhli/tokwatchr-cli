@@ -1,0 +1,43 @@
+{
+  "name": "tokwatchr-cli",
+  "version": "0.1.0",
+  "description": "CLI for downloading TikTok livestreams — powered by tokwatchr and kowu-cli",
+  "type": "module",
+  "bin": {
+    "tokwatchr": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "build": "bun build ./src/index.ts --outdir dist --target bun",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "lint": "biome lint .",
+    "lint:write": "biome lint --write .",
+    "format": "biome format .",
+    "format:write": "biome format --write .",
+    "check": "biome check .",
+    "check:write": "biome check --write ."
+  },
+  "keywords": [
+    "tiktok",
+    "live",
+    "livestream",
+    "download",
+    "recorder",
+    "stream",
+    "cli"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "kowu-cli": "^0.13.1",
+    "tokwatchr": "github:zfadhli/tokwatchr"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
+    "@types/bun": "latest",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
