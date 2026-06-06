@@ -10,12 +10,18 @@ import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
  * Matches the pattern from tokwatchr's own examples:
  * - `.on()` events for progress/complete
  * - Inline SIGINT handler calling `downloader.stop()` + `process.exit()`
- * - No shared state, no module-level indirection
  */
 export async function executeDownload(
   username: string,
   options: DownloadCliOptions,
 ): Promise<void> {
+  // Kill orphan child processes from previous interrupted runs
+  try {
+    Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
+  } catch {
+    // pkill not available — benign
+  }
+
   const downloader = new TikTokLiveDownloader(username, {
     output: options.output,
     quality: options.quality,
@@ -46,11 +52,19 @@ export async function executeDownload(
     s.succeed(`Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
-  // ─── SIGINT / SIGTERM (inline, matching tokwatchr examples) ──
+  // ─── SIGINT / SIGTERM ─────────────────────────────────
 
   const onSignal = async () => {
-    s.text = "Stopping...";
+    console.error("\nStopping...");
     await downloader.stop();
+    // stop() returns in ≤5s. The remux ffmpeg might still be converting
+    // the .ts → .mp4 (it has no abort signal). Wait up to 15s for it.
+    console.error("Remuxing... please wait.");
+    await new Promise((r) => setTimeout(r, 15_000));
+    // Kill any surviving child processes
+    try {
+      Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
+    } catch {}
     process.exit(130);
   };
   process.on("SIGINT", onSignal);
