@@ -41,6 +41,9 @@ export function handleFatalError(error: unknown): never {
   // tokwatchr error classes
   if (error instanceof Error) {
     switch (error.name) {
+      case "UserNotFoundError":
+        console.error(pc.red("✖"), "User not found. Check the username and try again.");
+        break;
       case "UserOfflineError":
         console.error(pc.red("✖"), "User is not live. Use `watch` to wait for them to go live.");
         break;

@@ -1,5 +1,5 @@
 import pc from "picocolors";
-import { TikTokLiveDownloader, UserOfflineError } from "tokwatchr";
+import { TikTokLiveDownloader, UserNotFoundError, UserOfflineError } from "tokwatchr";
 import type { DownloadResult, DownloadStats, RemuxInfo, StreamInfo } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
@@ -81,6 +81,10 @@ export async function executeDownload(
     if (sigintHandled) {
       // SIGINT handler is managing shutdown — don't double-exit
       return;
+    }
+    if (error instanceof UserNotFoundError) {
+      console.error(pc.red("✖"), "User not found. Check the username and try again.");
+      process.exit(1);
     }
     if (error instanceof UserOfflineError) {
       console.error(pc.red("✖"), "User is not live. Use `watch` to wait for them to go live.");

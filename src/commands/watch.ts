@@ -1,6 +1,6 @@
 import pc from "picocolors";
 import type { DownloadResult, DownloadStats, RemuxInfo, StreamInfo, WaitingInfo } from "tokwatchr";
-import { TikTokLiveDownloader } from "tokwatchr";
+import { TikTokLiveDownloader, UserNotFoundError } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 
@@ -101,6 +101,10 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     if (sigintHandled) {
       // SIGINT handler is managing shutdown — don't double-exit
       return;
+    }
+    if (error instanceof UserNotFoundError) {
+      console.error(pc.red("✖"), "User not found. Check the username and try again.");
+      process.exit(1);
     }
     console.error(pc.red("✖"), String(error));
     throw error;
