@@ -7,7 +7,7 @@
       "dependencies": {
         "cac": "^7.0.0",
         "picocolors": "^1.1.1",
-        "tokwatchr": "^0.6.1",
+        "tokwatchr": "^0.6.2",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.16",
@@ -179,7 +179,7 @@
 
     "tinyglobby": ["tinyglobby@0.2.17", "", { "dependencies": { "fdir": "^6.5.0", "picomatch": "^4.0.4" } }, "sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g=="],
 
-    "tokwatchr": ["tokwatchr@0.6.1", "", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^6" } }, "sha512-NLOu3+jDKHylQUZuDG34Eig3CyGb59txd7BcGq+1TLUaygHsmkXkF1wJCK2VorugJXMPy0sAq9gq57BWE+Apag=="],
+    "tokwatchr": ["tokwatchr@0.6.2", "", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^6" } }, "sha512-9TcfFd0oIcHS9SvIGS/DwwgLXYmjiz0O76SttpkrmY8Y1/tVjqmKsKbCMfk3KQ6/4xY/8WauPdHtDWiCDJrVwg=="],
 
     "tree-kill": ["tree-kill@1.2.2", "", { "bin": { "tree-kill": "cli.js" } }, "sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A=="],
 
