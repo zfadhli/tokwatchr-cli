@@ -34,21 +34,10 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     }, 3_000);
     await new Promise((r) => setTimeout(r, 15_000));
     clearInterval(interval);
-    // Kill any surviving child processes
-    try {
-      Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
-    } catch {}
     process.exit(130);
   };
   process.on("SIGINT", onSignal);
   process.on("SIGTERM", onSignal);
-
-  // Kill orphan child processes from previous interrupted runs
-  try {
-    Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
-  } catch {
-    // pkill not available — benign
-  }
 
   const downloader = new TikTokLiveDownloader(username, {
     output: options.output,
