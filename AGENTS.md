@@ -1,14 +1,14 @@
 # tokwatchr-cli
 
-CLI tool for downloading TikTok livestreams — powered by [tokwatchr](https://github.com/zfadhli/tokwatchr) and [kowu-cli](https://github.com/zfadhli/kowu-cli).
+CLI tool for downloading TikTok livestreams — powered by [tokwatchr](https://github.com/zfadhli/tokwatchr).
 
 ## Tech Stack
 
 | Layer | Choice |
 |-------|--------|
-| Runtime | [Bun](https://bun.sh) |
+| Runtime | Node.js >= 18 / [Bun](https://bun.sh) |
 | Language | TypeScript (strict) |
-| CLI framework | [kowu-cli](https://www.npmjs.com/package/kowu-cli) (cac + ora + picocolors + @clack/prompts + log-symbols + boxen) |
+| CLI framework | [cac](https://github.com/cacjs/cac) |
 | Testing | [Bun test](https://bun.sh/docs/cli/test) |
 | Lint + Format | [Biome](https://biomejs.dev) |
 | CI | GitHub Actions |

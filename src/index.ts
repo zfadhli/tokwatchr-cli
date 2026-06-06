@@ -1,4 +1,4 @@
-#! /usr/bin/env bun
+#! /usr/bin/env node
 
 import { cac } from "cac";
 import { executeDownload } from "./commands/download";

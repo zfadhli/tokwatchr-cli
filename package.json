@@ -1,14 +1,20 @@
 {
   "name": "tokwatchr-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI for downloading TikTok livestreams — powered by tokwatchr",
   "type": "module",
   "bin": {
-    "tokwatchr": "./src/index.ts"
+    "tokwatchr": "./dist/index.mjs"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "start": "bun run src/index.ts",
     "build": "tsdown",
+    "prepack": "bun run build",
+    "prepublishOnly": "bun run typecheck && bun run test && bun run lint",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "lint": "biome lint .",
@@ -17,6 +23,19 @@
     "format:write": "biome format --write .",
     "check": "biome check .",
     "check:write": "biome check --write ."
+  },
+  "engines": {
+    "node": ">=18",
+    "bun": ">=1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zfadhli/tokwatchr-cli.git"
+  },
+  "homepage": "https://github.com/zfadhli/tokwatchr-cli#readme",
+  "bugs": "https://github.com/zfadhli/tokwatchr-cli/issues",
+  "author": {
+    "name": "Zulfadhli Zakari"
   },
   "keywords": [
     "tiktok",
@@ -37,9 +56,6 @@
     "@biomejs/biome": "^2.4.16",
     "@types/bun": "latest",
     "tsdown": "^0.22.2",
-    "typescript": "^6.0.0"
-  },
-  "peerDependencies": {
     "typescript": "^6.0.0"
   }
 }
