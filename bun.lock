@@ -7,7 +7,7 @@
       "dependencies": {
         "cac": "^7.0.0",
         "picocolors": "^1.1.1",
-        "tokwatchr": "^0.5.0",
+        "tokwatchr": "^0.6.0",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.16",
@@ -66,7 +66,7 @@
 
     "picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 
-    "tokwatchr": ["tokwatchr@0.5.0", "", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^6" } }, "sha512-a9+Ac/zFPkWQ6X2f9bzMlLmUwM+6Im/8ADSOi7IBAIfACvHGaLGgYiR7tdNnOoAV+oVcxJKgDxi6KjzayuewJw=="],
+    "tokwatchr": ["tokwatchr@0.6.0", "", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^6" } }, "sha512-NFZB41+Vpecd1mG31j8pP7S2EFhojnRQwmkuv9jRnaAyktr+9iOBKc9lqKtUuhprgrXwN36A1JigonrWZvBeKA=="],
 
     "typescript": ["typescript@6.0.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw=="],
 
