@@ -40,14 +40,14 @@ cli
   .option("-o, --output <dir>", "Output directory [cwd]")
   .option("-q, --quality <quality>", "Quality: best|worst|fullhd1|hd1|sd2|sd1 [best]")
   .option("-f, --format <format>", "Format: mp4|mkv|ts|flv [mp4]")
-  .option("-d, --max-duration <minutes>", "Max recording duration in minutes")
-  .option("-s, --segment-duration <minutes>", "Split into N-minute segments")
-  .option("-i, --interval <minutes>", "Poll interval in minutes for wait mode [0.5]")
+  .option("-d, --max-duration <minutes>", "Max recording duration in minutes [no limit]")
+  .option("-s, --segment-duration <minutes>", "Split into N-minute segments [20]")
+  .option("-i, --interval <minutes>", "Poll interval in minutes [3]")
   .option("--proxy <url>", "HTTP/SOCKS proxy URL")
   .option("--no-ffmpeg", "Skip ffmpeg processing (output .flv)")
   .example("tokwatchr watch username")
   .example("tokwatchr watch username -s 10 -d 120")
-  .example("tokwatchr watch username -i 0.5")
+  .example("tokwatchr watch username -i 1")
   .action(async (username: string, options: WatchCliOptions) => {
     try {
       await executeWatch(username, options);

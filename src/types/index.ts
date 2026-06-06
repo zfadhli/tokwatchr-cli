@@ -17,10 +17,10 @@ export interface DownloadCliOptions extends SharedCliOptions {}
 
 /** Options specific to the `watch` command */
 export interface WatchCliOptions extends SharedCliOptions {
-  /** Max recording duration in minutes */
+  /** Max recording duration in minutes (default: no limit) */
   maxDuration?: number;
-  /** Segment duration in minutes */
+  /** Segment duration in minutes (default: 20) */
   segmentDuration?: number;
-  /** Poll interval in minutes (default: 0.5) */
+  /** Poll interval in minutes (default: 3) */
   interval?: number;
 }
