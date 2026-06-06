@@ -1,5 +1,4 @@
 import pc from "picocolors";
-import ora from "ora";
 import { TikTokLiveDownloader, UserOfflineError } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
@@ -8,16 +7,13 @@ import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 /**
  * Execute the `download` command.
  *
- * Matches the pattern from tokwatchr's own examples:
- * - `.on()` events for progress/complete
- * - Inline SIGINT handler calling `downloader.stop()` + `process.exit()`
+ * Uses plain console output (no spinner) so terminal stays in cooked
+ * mode and SIGINT flows normally through process.on().
  */
 export async function executeDownload(
   username: string,
   options: DownloadCliOptions,
 ): Promise<void> {
-  console.error("Starting...");
-
   // ─── SIGINT / SIGTERM (registered BEFORE any async work) ─────
 
   let sigintHandled = false;
@@ -39,26 +35,28 @@ export async function executeDownload(
     useFfmpeg: options.ffmpeg,
   });
 
-  const s = ora("Resolving room...").start();
+  console.error("Resolving room...");
 
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
-    s.text = `Recording ${info.title}...`;
+    console.error(`Recording ${info.title}...`);
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
-    s.text = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
+    const line = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
+    process.stderr.write(`\r  ${line}  `);
   });
 
   downloader.on("complete", (results: DownloadResult[]) => {
+    process.stderr.write("\n");
     for (const r of results) {
-      console.log(
+      console.error(
         `  ${pc.green("Saved:")} ${r.filePath}  ${pc.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
       );
     }
     const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);
-    s.succeed(`Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
+    console.error(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
   // ─── Start ──────────────────────────────────────────────
@@ -71,10 +69,10 @@ export async function executeDownload(
       return;
     }
     if (error instanceof UserOfflineError) {
-      s.fail("User is not live. Use `watch` to wait for them to go live.");
+      console.error(pc.red("✖"), "User is not live. Use `watch` to wait for them to go live.");
       process.exit(1);
     }
-    s.fail(String(error));
+    console.error(pc.red("✖"), String(error));
     throw error;
   }
 }

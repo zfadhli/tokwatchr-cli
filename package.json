@@ -30,7 +30,6 @@
   "license": "MIT",
   "dependencies": {
     "cac": "^7.0.0",
-    "ora": "^9.4.0",
     "picocolors": "^1.1.1",
     "tokwatchr": "github:zfadhli/tokwatchr"
   },

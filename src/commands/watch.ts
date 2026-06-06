@@ -1,5 +1,4 @@
 import pc from "picocolors";
-import ora from "ora";
 import { TikTokLiveDownloader } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
@@ -8,13 +7,10 @@ import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 /**
  * Execute the `watch` command.
  *
- * Matches the pattern from tokwatchr's own examples:
- * - `.on()` events for progress/segment/complete
- * - Inline SIGINT handler calling `downloader.stop()` + `process.exit()`
+ * Uses plain console output (no spinner) so terminal stays in cooked
+ * mode and SIGINT flows normally through process.on().
  */
 export async function executeWatch(username: string, options: WatchCliOptions): Promise<void> {
-  console.error("Starting...");
-
   // ─── SIGINT / SIGTERM (registered BEFORE any async work) ─────
 
   let sigintHandled = false;
@@ -39,32 +35,38 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     checkInterval: options.interval,
   });
 
-  const s = ora(`Waiting for ${username} to go live...`).start();
+  console.error(`Waiting for ${username} to go live...`);
 
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
-    s.text = `Recording ${info.title}...`;
+    console.error(
+      `\n${pc.green("Live!")} ${info.title}  ${pc.dim(`(${info.viewerCount} viewers)`)}`,
+    );
+    console.error("Recording...");
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
-    s.text = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
+    const line = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
+    process.stderr.write(`\r  ${line}  `);
   });
 
   downloader.on("segment", (result: DownloadResult, partNum: number) => {
-    console.log(
+    process.stderr.write("\n");
+    console.error(
       `  ${pc.green("Segment")} ${partNum}: ${result.filePath}  ${pc.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
     );
   });
 
   downloader.on("complete", (results: DownloadResult[]) => {
+    process.stderr.write("\n");
     for (const r of results) {
-      console.log(
+      console.error(
         `  ${pc.green("Saved:")} ${r.filePath}  ${pc.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
       );
     }
     const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);
-    s.succeed(`Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
+    console.error(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
   // ─── Start (waits for live) ────────────────────────────
@@ -76,7 +78,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
       // SIGINT handler is managing shutdown — don't double-exit
       return;
     }
-    s.fail(String(error));
+    console.error(pc.red("✖"), String(error));
     throw error;
   }
 }
