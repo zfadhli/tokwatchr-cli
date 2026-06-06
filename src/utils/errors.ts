@@ -34,7 +34,7 @@ export class ConfigError extends CliError {
  */
 export function handleFatalError(error: unknown): never {
   if (error instanceof CliError) {
-    console.error(pc.red("✖"), error.message);
+    console.error(pc.red("[error]"), error.message);
     process.exit(1);
   }
 
@@ -42,41 +42,41 @@ export function handleFatalError(error: unknown): never {
   if (error instanceof Error) {
     switch (error.name) {
       case "UserNotFoundError":
-        console.error(pc.red("✖"), "User not found. Check the username and try again.");
+        console.error(pc.red("[error]"), "User not found. Check the username and try again.");
         break;
       case "UserOfflineError":
-        console.error(pc.red("✖"), error.message);
+        console.error(pc.red("[error]"), error.message);
         break;
       case "RoomResolveError":
-        console.error(pc.red("✖"), "Could not find the user's livestream room.");
+        console.error(pc.red("[error]"), "Could not find the user's livestream room.");
         break;
       case "StreamFetchError":
         console.error(
-          pc.red("✖"),
+          pc.red("[error]"),
           "Could not fetch stream info. Check the username and try again.",
         );
         break;
       case "DownloadFailedError":
-        console.error(pc.red("✖"), `Download failed: ${error.message}`);
+        console.error(pc.red("[error]"), `Download failed: ${error.message}`);
         break;
       case "FfmpegError":
         console.error(
-          pc.red("✖"),
+          pc.red("[error]"),
           `ffmpeg error: ${error.message}. Install ffmpeg or use --no-ffmpeg.`,
         );
         break;
       case "AbortError":
-        console.error(pc.blue("ℹ"), "Aborted.");
+        console.error(pc.blue("[info]"), "Aborted.");
         break;
       default:
-        console.error(pc.red("✖"), `Unexpected error: ${error.message}`);
+        console.error(pc.red("[error]"), `Unexpected error: ${error.message}`);
         if (process.env.DEBUG) {
           console.error(error.stack);
         }
         break;
     }
   } else {
-    console.error(pc.red("✖"), String(error));
+    console.error(pc.red("[error]"), String(error));
   }
 
   process.exit(1);

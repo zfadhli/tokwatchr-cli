@@ -1,6 +1,6 @@
 import pc from "picocolors";
-import { TikTokLiveDownloader, UserNotFoundError, UserOfflineError } from "tokwatchr";
 import type { DownloadResult, DownloadStats, RemuxInfo, StreamInfo } from "tokwatchr";
+import { TikTokLiveDownloader, UserNotFoundError, UserOfflineError } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 
@@ -20,7 +20,7 @@ export async function executeDownload(
 
   const onSignal = async () => {
     sigintHandled = true;
-    console.log("\n\n  Stopping...");
+    console.log(`\n\n  ${pc.red("Stopping...")}`);
     await downloader.stop();
     process.exit(0);
   };
@@ -35,12 +35,13 @@ export async function executeDownload(
     useFfmpeg: options.ffmpeg,
   });
 
-  console.error("Resolving room...");
+  console.log(`${pc.dim("Resolving room...")}`);
 
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
-    console.error(`Recording ${info.title}...`);
+    console.log(`\n${pc.blue(`@${info.username}`)}`);
+    console.log(`  ${pc.green("Recording...")}`);
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
@@ -83,14 +84,14 @@ export async function executeDownload(
       return;
     }
     if (error instanceof UserNotFoundError) {
-      console.error(pc.red("✖"), "User not found. Check the username and try again.");
+      console.error(pc.red("[error]"), "User not found. Check the username and try again.");
       process.exit(1);
     }
     if (error instanceof UserOfflineError) {
-      console.error(pc.red("✖"), error.message);
+      console.error(pc.red("[error]"), error.message);
       process.exit(1);
     }
-    console.error(pc.red("✖"), String(error));
+    console.error(pc.red("[error]"), String(error));
     throw error;
   }
 }

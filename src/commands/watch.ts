@@ -38,7 +38,8 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
-    console.error(`\n${pc.blue(`@${info.username}`)}`);
+    clearInterval(waitingTimer);
+    console.log(`\n${pc.blue(`@${info.username}`)}`);
     console.log(`  ${pc.green("Recording...")}`);
   });
 
