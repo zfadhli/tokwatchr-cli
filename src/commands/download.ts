@@ -87,7 +87,7 @@ export async function executeDownload(
       process.exit(1);
     }
     if (error instanceof UserOfflineError) {
-      console.error(pc.red("✖"), "User is not live. Use `watch` to wait for them to go live.");
+      console.error(pc.red("✖"), error.message);
       process.exit(1);
     }
     console.error(pc.red("✖"), String(error));
