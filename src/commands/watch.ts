@@ -1,6 +1,6 @@
 import pc from "picocolors";
-import { TikTokLiveDownloader } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
+import { TikTokLiveDownloader } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 
@@ -17,7 +17,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
 
   const onSignal = async () => {
     sigintHandled = true;
-    console.log("\n\n  Stopping...");
+    console.log(`\n\n  ${pc.red(`Stopping...`)}`);
     await downloader.stop();
     process.exit(0);
   };
@@ -35,15 +35,13 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     checkInterval: options.interval,
   });
 
-  console.error(`Waiting for ${username} to go live...`);
+  console.log(`${pc.dim("Waiting for ")}${pc.blue(username)}${pc.dim(" to go live...")}`);
 
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
-    console.error(
-      `\n${pc.green("Live!")} ${info.title}  ${pc.dim(`(${info.viewerCount} viewers)`)}`,
-    );
-    console.error("Recording...");
+    console.error(`\n${pc.blue(`@${info.username}`)}`);
+    console.log(`  ${pc.green("Recording...")}`);
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
