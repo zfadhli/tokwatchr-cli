@@ -38,15 +38,13 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
-    clearInterval(waitingTimer);
     console.log(`\n${pc.blue(`@${info.username}`)}`);
     console.log(`  ${pc.green("Recording...")}`);
   });
 
-  // Sync a local timestamp from tokwatchr's waiting event (fires each poll cycle)
-  let waitingStart = Date.now();
+  // The waiting event fires each poll cycle with elapsed time
   downloader.on("waiting", (info: WaitingInfo) => {
-    waitingStart = Date.now() - info.elapsed * 1000;
+    process.stderr.write(`\r  ${pc.dim(`Waiting... ${formatDuration(info.elapsed)}`)}  `);
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
@@ -86,30 +84,27 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     console.log(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
-  // ─── Start (waits for live) ────────────────────────────
+  // ─── Start (persistent loop) ────────────────────────────
 
   console.log(`${pc.dim("Waiting for ")}${pc.blue(username)}${pc.dim(" to go live...")}`);
 
-  // 1-second local timer so the display updates between tokwatchr's poll cycles
-  const waitingTimer = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - waitingStart) / 1000);
-    process.stderr.write(`\r  ${pc.dim(`Waiting... ${formatDuration(elapsed)}`)}  `);
-  }, 1_000);
-
-  try {
-    await downloader.start();
-  } catch (error) {
-    if (sigintHandled) {
-      // SIGINT handler is managing shutdown — don't double-exit
-      return;
+  while (true) {
+    try {
+      await downloader.start();
+      // Stream ended — complete event already printed results.
+      // Continue watching for the next one.
+      console.log(`\n  ${pc.dim("Stream ended, watching for next...")}`);
+    } catch (error) {
+      if (sigintHandled) {
+        // SIGINT handler is managing shutdown — don't double-exit
+        return;
+      }
+      if (error instanceof UserNotFoundError) {
+        console.error(pc.red("✖"), "User not found. Check the username and try again.");
+        process.exit(1);
+      }
+      console.error(pc.red("✖"), String(error));
+      throw error;
     }
-    if (error instanceof UserNotFoundError) {
-      console.error(pc.red("✖"), "User not found. Check the username and try again.");
-      process.exit(1);
-    }
-    console.error(pc.red("✖"), String(error));
-    throw error;
-  } finally {
-    clearInterval(waitingTimer);
   }
 }
