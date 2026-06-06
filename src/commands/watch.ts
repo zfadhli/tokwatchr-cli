@@ -35,8 +35,6 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     checkInterval: options.interval,
   });
 
-  console.log(`${pc.dim("Waiting for ")}${pc.blue(username)}${pc.dim(" to go live...")}`);
-
   // ─── Wire events ───────────────────────────────────────
 
   downloader.on("start", (info: StreamInfo) => {
@@ -44,8 +42,10 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     console.log(`  ${pc.green("Recording...")}`);
   });
 
+  // Sync a local timestamp from tokwatchr's waiting event (fires each poll cycle)
+  let waitingStart = Date.now();
   downloader.on("waiting", (info: WaitingInfo) => {
-    process.stderr.write(`\r  ${pc.dim(`Waiting... ${formatDuration(info.elapsed)}`)}  `);
+    waitingStart = Date.now() - info.elapsed * 1000;
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
@@ -73,6 +73,14 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
 
   // ─── Start (waits for live) ────────────────────────────
 
+  console.log(`${pc.dim("Waiting for ")}${pc.blue(username)}${pc.dim(" to go live...")}`);
+
+  // 1-second local timer so the display updates between tokwatchr's poll cycles
+  const waitingTimer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - waitingStart) / 1000);
+    process.stderr.write(`\r  ${pc.dim(`Waiting... ${formatDuration(elapsed)}`)}  `);
+  }, 1_000);
+
   try {
     await downloader.start();
   } catch (error) {
@@ -82,5 +90,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     }
     console.error(pc.red("✖"), String(error));
     throw error;
+  } finally {
+    clearInterval(waitingTimer);
   }
 }
