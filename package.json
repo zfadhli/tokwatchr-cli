@@ -46,6 +46,10 @@
     "stream",
     "cli"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "license": "MIT",
   "dependencies": {
     "cac": "^7.0.0",
