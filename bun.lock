@@ -7,7 +7,7 @@
       "dependencies": {
         "cac": "^7.0.0",
         "picocolors": "^1.1.1",
-        "tokwatchr": "github:zfadhli/tokwatchr",
+        "tokwatchr": "^0.4.2",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.16",
@@ -66,7 +66,7 @@
 
     "picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 
-    "tokwatchr": ["tokwatchr@github:zfadhli/tokwatchr#7e4fe67", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^5" } }, "zfadhli-tokwatchr-7e4fe67", "sha512-+sZ3Mk1y+TjVGbroXNcFYn8Ab0MFd6n9yQYVMFMaLKejQFmFYzZuwT1UJ6ROfNRACXsyZzbs51cXSbgEBbS+dQ=="],
+    "tokwatchr": ["tokwatchr@0.4.2", "", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^6" } }, "sha512-vLZuysz23l9brQIJXbphnj9w5bUZI4rR3KeAYq4wP1U5cAnm77RxU2PhhN4p9HhjmEGMA+HBowOoC9woXPyRJQ=="],
 
     "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 

@@ -1,7 +1,7 @@
 {
   "name": "tokwatchr-cli",
   "version": "0.1.0",
-  "description": "CLI for downloading TikTok livestreams — powered by tokwatchr and kowu-cli",
+  "description": "CLI for downloading TikTok livestreams — powered by tokwatchr",
   "type": "module",
   "bin": {
     "tokwatchr": "./src/index.ts"
@@ -31,7 +31,7 @@
   "dependencies": {
     "cac": "^7.0.0",
     "picocolors": "^1.1.1",
-    "tokwatchr": "github:zfadhli/tokwatchr"
+    "tokwatchr": "^0.4.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
