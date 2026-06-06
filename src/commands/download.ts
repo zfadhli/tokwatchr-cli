@@ -16,8 +16,9 @@ export async function executeDownload(
   username: string,
   options: DownloadCliOptions,
 ): Promise<void> {
-  const s = spinner("Resolving room...").start();
-
+  // Construct the downloader first — the constructor may block synchronously
+  // for up to 5s detecting ffmpeg via spawnSync. Starting the spinner after
+  // ensures it doesn't lose animation frames during the stall.
   const downloader = new TikTokLiveDownloader(username, {
     output: options.output,
     quality: options.quality,
@@ -31,6 +32,8 @@ export async function executeDownload(
       s.text = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
     },
   });
+
+  const s = spinner("Resolving room...").start();
 
   setActiveDownloader(downloader);
 
