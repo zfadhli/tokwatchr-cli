@@ -51,12 +51,12 @@ export async function executeDownload(
   downloader.on("complete", (results: DownloadResult[]) => {
     process.stderr.write("\n");
     for (const r of results) {
-      console.error(
+      console.log(
         `  ${pc.green("Saved:")} ${r.filePath}  ${pc.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
       );
     }
     const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);
-    console.error(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
+    console.log(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
   // ─── Start ──────────────────────────────────────────────

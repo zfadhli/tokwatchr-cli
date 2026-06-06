@@ -53,7 +53,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
 
   downloader.on("segment", (result: DownloadResult, partNum: number) => {
     process.stderr.write("\n");
-    console.error(
+    console.log(
       `  ${pc.green("Segment")} ${partNum}: ${result.filePath}  ${pc.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
     );
   });
@@ -61,12 +61,12 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
   downloader.on("complete", (results: DownloadResult[]) => {
     process.stderr.write("\n");
     for (const r of results) {
-      console.error(
+      console.log(
         `  ${pc.green("Saved:")} ${r.filePath}  ${pc.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
       );
     }
     const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);
-    console.error(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
+    console.log(`  Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
   // ─── Start (waits for live) ────────────────────────────
