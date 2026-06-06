@@ -23,21 +23,9 @@ export async function executeDownload(
 
   const onSignal = async () => {
     sigintHandled = true;
-    console.error("\nStopping...");
-    // stop() first: gracefully aborts the download and starts the remux.
-    // It has its own ≤5s safety timeout.
+    console.log("\n\n  Stopping...");
     await downloader.stop();
-    // stop() returns in ≤5s. The remux ffmpeg might still be converting
-    // the .ts → .mp4 (it has no abort signal). Wait up to 15s for it.
-    console.error("Remuxing... please wait.");
-    let dots = 0;
-    const interval = setInterval(() => {
-      console.error(".");
-      if (++dots >= 5) clearInterval(interval);
-    }, 3_000);
-    await new Promise((r) => setTimeout(r, 15_000));
-    clearInterval(interval);
-    process.exit(130);
+    process.exit(0);
   };
   process.on("SIGINT", onSignal);
   process.on("SIGTERM", onSignal);
