@@ -1,5 +1,5 @@
 import pc from "picocolors";
-import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
+import type { DownloadResult, DownloadStats, StreamInfo, WaitingInfo } from "tokwatchr";
 import { TikTokLiveDownloader } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
@@ -42,6 +42,10 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
   downloader.on("start", (info: StreamInfo) => {
     console.error(`\n${pc.blue(`@${info.username}`)}`);
     console.log(`  ${pc.green("Recording...")}`);
+  });
+
+  downloader.on("waiting", (info: WaitingInfo) => {
+    process.stderr.write(`\r  ${pc.dim(`Waiting... ${formatDuration(info.elapsed)}`)}  `);
   });
 
   downloader.on("progress", (stats: DownloadStats) => {
