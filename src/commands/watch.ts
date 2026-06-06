@@ -1,5 +1,5 @@
 import pc from "picocolors";
-import type { DownloadResult, DownloadStats, StreamInfo, WaitingInfo } from "tokwatchr";
+import type { DownloadResult, DownloadStats, RemuxInfo, StreamInfo, WaitingInfo } from "tokwatchr";
 import { TikTokLiveDownloader } from "tokwatchr";
 import type { WatchCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
@@ -32,7 +32,7 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
     useFfmpeg: options.ffmpeg,
     maxDuration: options.maxDuration ? options.maxDuration * 60 : undefined,
     maxSegmentDuration: (options.segmentDuration ?? 20) * 60,
-    checkInterval: (options.interval ?? 3) * 60_000,
+    checkInterval: (options.interval ?? 3) * 60,
   });
 
   // ─── Wire events ───────────────────────────────────────
@@ -51,6 +51,20 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
   downloader.on("progress", (stats: DownloadStats) => {
     const line = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
     process.stderr.write(`\r  ${line}  `);
+  });
+
+  downloader.on("remux", (info: RemuxInfo) => {
+    switch (info.status) {
+      case "started":
+        process.stderr.write(`\n  ${pc.dim("Remuxing...")}`);
+        break;
+      case "completed":
+        process.stderr.write(`\r  ${pc.green("Remuxed:")} ${info.outputPath}\n`);
+        break;
+      case "failed":
+        process.stderr.write(`\n  ${pc.yellow("Remux failed, keeping .ts as fallback")}\n`);
+        break;
+    }
   });
 
   downloader.on("segment", (result: DownloadResult, partNum: number) => {

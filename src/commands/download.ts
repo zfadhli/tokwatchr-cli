@@ -1,6 +1,6 @@
 import pc from "picocolors";
 import { TikTokLiveDownloader, UserOfflineError } from "tokwatchr";
-import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
+import type { DownloadResult, DownloadStats, RemuxInfo, StreamInfo } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
 import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 
@@ -46,6 +46,20 @@ export async function executeDownload(
   downloader.on("progress", (stats: DownloadStats) => {
     const line = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
     process.stderr.write(`\r  ${line}  `);
+  });
+
+  downloader.on("remux", (info: RemuxInfo) => {
+    switch (info.status) {
+      case "started":
+        process.stderr.write(`\n  ${pc.dim("Remuxing...")}`);
+        break;
+      case "completed":
+        process.stderr.write(`\r  ${pc.green("Remuxed:")} ${info.outputPath}\n`);
+        break;
+      case "failed":
+        process.stderr.write(`\n  ${pc.yellow("Remux failed, keeping .ts as fallback")}\n`);
+        break;
+    }
   });
 
   downloader.on("complete", (results: DownloadResult[]) => {
