@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "bun run src/index.ts",
-    "build": "bun build ./src/index.ts --outdir dist --target bun",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "lint": "biome lint .",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@types/bun": "latest",
+    "tsdown": "^0.22.2",
     "typescript": "^6.0.0"
   },
   "peerDependencies": {
