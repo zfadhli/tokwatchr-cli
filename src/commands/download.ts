@@ -19,12 +19,13 @@ export async function executeDownload(
 
   // ─── SIGINT / SIGTERM (registered BEFORE any async work) ─────
 
+  let sigintHandled = false;
+
   const onSignal = async () => {
+    sigintHandled = true;
     console.error("\nStopping...");
-    // Kill existing child processes before stop() so they don't interfere
-    try {
-      Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
-    } catch {}
+    // stop() first: gracefully aborts the download and starts the remux.
+    // It has its own ≤5s safety timeout.
     await downloader.stop();
     // stop() returns in ≤5s. The remux ffmpeg might still be converting
     // the .ts → .mp4 (it has no abort signal). Wait up to 15s for it.
@@ -87,6 +88,10 @@ export async function executeDownload(
   try {
     await downloader.startRecording();
   } catch (error) {
+    if (sigintHandled) {
+      // SIGINT handler is managing shutdown — don't double-exit
+      return;
+    }
     if (error instanceof UserOfflineError) {
       s.fail("User is not live. Use `watch` to wait for them to go live.");
       process.exit(1);
