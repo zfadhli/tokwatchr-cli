@@ -1,4 +1,4 @@
-import { color, logSymbols } from "kowu-cli";
+import { color, spinner } from "kowu-cli";
 import { download as tokWatchrDownload } from "tokwatchr";
 import type { DownloadStats } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
@@ -7,28 +7,32 @@ import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 /**
  * Execute the `download` command.
  *
- * Uses tokwatchr's `download()` function for a one-shot
- * fire-and-forget download. The caller is responsible for
- * wrapping this in a spinner.
+ * Uses tokwatchr's `download()` function with a manual ora spinner
+ * that live-updates with progress stats.
  */
 export async function executeDownload(
   username: string,
   options: DownloadCliOptions,
 ): Promise<void> {
-  const result = await tokWatchrDownload(username, {
-    output: options.output,
-    quality: options.quality,
-    format: options.format,
-    proxyUrl: options.proxy,
-    useFfmpeg: options.ffmpeg,
-    onProgress(stats: DownloadStats) {
-      console.log(
-        `  ${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`,
-      );
-    },
-  });
+  const s = spinner("Resolving room...").start();
 
-  console.log(
-    `\n${logSymbols.success} ${color.green("Saved:")} ${result.filePath}  ${color.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
-  );
+  try {
+    const result = await tokWatchrDownload(username, {
+      output: options.output,
+      quality: options.quality,
+      format: options.format,
+      proxyUrl: options.proxy,
+      useFfmpeg: options.ffmpeg,
+      onProgress(stats: DownloadStats) {
+        s.text = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
+      },
+    });
+
+    s.succeed(
+      `${color.green("Saved:")} ${result.filePath}  ${color.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
+    );
+  } catch (error) {
+    s.fail(String(error));
+    throw error;
+  }
 }

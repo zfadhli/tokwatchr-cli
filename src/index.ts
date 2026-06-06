@@ -27,7 +27,6 @@ cli
   .example("tokwatchr download officialgeilegisela")
   .example("tokwatchr download tv_asahi_news -o ./vods -q hd1")
   .example("tokwatchr download username --proxy socks5://localhost:1080")
-  .spinner.yellow("Downloading livestream...")
   .action(async (username: string, options: DownloadCliOptions) => {
     try {
       await executeDownload(username, options);
@@ -52,7 +51,6 @@ cli
   .example("tokwatchr watch username")
   .example("tokwatchr watch username -s 600 -d 7200")
   .example("tokwatchr watch username -i 60000")
-  .spinner.cyan("Waiting for livestream...")
   .action(async (username: string, options: WatchCliOptions) => {
     try {
       await executeWatch(username, options);
