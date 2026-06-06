@@ -36,9 +36,9 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@types/bun": "latest",
-    "typescript": "^5"
+    "typescript": "^6.0.0"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^6.0.0"
   }
 }
