@@ -125,7 +125,7 @@
 
     "strip-ansi": ["strip-ansi@7.2.0", "", { "dependencies": { "ansi-regex": "^6.2.2" } }, "sha512-yDPMNjp4WyfYBkHnjIRLfca1i6KMyGCtsVgoKe/z1+6vukgaENdgGBZt+ZmKPc4gavvEZ5OgHfHdrazhgNyG7w=="],
 
-    "tokwatchr": ["tokwatchr@github:zfadhli/tokwatchr#9f0b024", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^5" } }, "zfadhli-tokwatchr-9f0b024", "sha512-o9DajwxfjuNO7u7u+JywYipc+LyTe044Sd3VVdmE12BisGCgUuzxLBr7ko8ycHsMFC9aYTNYdF4NT6Nn0fxjhA=="],
+    "tokwatchr": ["tokwatchr@github:zfadhli/tokwatchr#7e4fe67", { "dependencies": { "impit": "^0.14.1" }, "peerDependencies": { "typescript": "^5" } }, "zfadhli-tokwatchr-7e4fe67", "sha512-+sZ3Mk1y+TjVGbroXNcFYn8Ab0MFd6n9yQYVMFMaLKejQFmFYzZuwT1UJ6ROfNRACXsyZzbs51cXSbgEBbS+dQ=="],
 
     "type-fest": ["type-fest@4.41.0", "", {}, "sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA=="],
 
