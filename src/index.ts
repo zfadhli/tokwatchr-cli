@@ -3,12 +3,12 @@
 import { program } from "kowu-cli";
 import { executeDownload } from "./commands/download";
 import { executeWatch } from "./commands/watch";
-import { registerSigintHandler } from "./utils/active-downloader";
+import { registerSignalHandlers } from "./utils/active-downloader";
 import type { DownloadCliOptions, WatchCliOptions } from "./types";
 import { handleFatalError } from "./utils/errors";
 
-// Register global SIGINT handler for graceful stop
-registerSigintHandler();
+// Register global signal handlers for graceful stop
+registerSignalHandlers();
 
 // -------------------------------------------------------
 // Program

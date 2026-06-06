@@ -20,16 +20,26 @@ function killChildProcesses(): void {
 }
 
 /**
- * Register a global SIGINT handler that gracefully stops the active
- * downloader and kills any remaining child processes before exiting.
+ * Shared handler for both SIGINT and SIGTERM.
  */
-export function registerSigintHandler(): void {
-  process.on("SIGINT", async () => {
-    if (activeDownloader) {
-      await activeDownloader.stop();
-    }
-    killChildProcesses();
-    process.exit(130);
+async function handleSignal(signal: NodeJS.Signals): Promise<void> {
+  if (activeDownloader) {
+    await activeDownloader.stop();
+  }
+  killChildProcesses();
+  process.exit(signal === "SIGINT" ? 130 : 143);
+}
+
+/**
+ * Register global SIGINT and SIGTERM handlers that gracefully stop
+ * the active downloader and kill any remaining child processes.
+ */
+export function registerSignalHandlers(): void {
+  process.on("SIGINT", () => {
+    void handleSignal("SIGINT");
+  });
+  process.on("SIGTERM", () => {
+    void handleSignal("SIGTERM");
   });
 }
 

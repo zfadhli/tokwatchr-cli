@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { executeWatch } from "../../src/commands/watch";
-import { registerSigintHandler } from "../../src/utils/active-downloader";
+import { registerSignalHandlers } from "../../src/utils/active-downloader";
 
 describe("executeWatch", () => {
   it("is a function", () => {
@@ -12,12 +12,12 @@ describe("executeWatch", () => {
   });
 });
 
-describe("registerSigintHandler", () => {
+describe("registerSignalHandlers", () => {
   it("is a function", () => {
-    expect(typeof registerSigintHandler).toBe("function");
+    expect(typeof registerSignalHandlers).toBe("function");
   });
 
   it("accepts no arguments", () => {
-    expect(registerSigintHandler.length).toBe(0);
+    expect(registerSignalHandlers.length).toBe(0);
   });
 });

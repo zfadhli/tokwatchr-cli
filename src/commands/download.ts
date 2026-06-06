@@ -1,5 +1,5 @@
 import { color, spinner } from "kowu-cli";
-import { TikTokLiveDownloader } from "tokwatchr";
+import { TikTokLiveDownloader, UserOfflineError } from "tokwatchr";
 import type { DownloadResult, DownloadStats, StreamInfo } from "tokwatchr";
 import type { DownloadCliOptions } from "../types";
 import { cleanupOrphanedProcesses, setActiveDownloader } from "../utils/active-downloader";
@@ -8,20 +8,16 @@ import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 /**
  * Execute the `download` command.
  *
- * Uses tokwatchr's `TikTokLiveDownloader.startRecording()` so that:
- * - On normal completion, the `.ts` segment is remuxed to the target format.
- * - On SIGINT, `stop()` remuxes any pending segment before exit.
+ * Uses `startRecording()` (fails if offline) with events wired via `.on()`.
+ * On `UserOfflineError` the command stops with a suggestion to use `watch`.
  */
 export async function executeDownload(
   username: string,
   options: DownloadCliOptions,
 ): Promise<void> {
-  // Kill any leftover child processes from a previous interrupted run
   cleanupOrphanedProcesses();
 
-  // Set a placeholder stop handler before the constructor (which may block
-  // synchronously for up to 5s detecting ffmpeg via spawnSync). If the user
-  // presses Ctrl+C during that window, we can at least kill child processes.
+  // Placeholder before constructor (may block up to 5s on spawnSync)
   const placeholder = { stop: () => Promise.resolve() };
   setActiveDownloader(placeholder);
 
@@ -31,26 +27,40 @@ export async function executeDownload(
     format: options.format,
     proxyUrl: options.proxy,
     useFfmpeg: options.ffmpeg,
-    onStart(info: StreamInfo) {
-      s.text = `Recording ${info.title}...`;
-    },
-    onProgress(stats: DownloadStats) {
-      s.text = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
-    },
   });
 
   const s = spinner("Resolving room...").start();
-
-  // Replace placeholder with the real downloader for proper stop/remux
   setActiveDownloader(downloader);
 
-  try {
-    const result: DownloadResult = await downloader.startRecording();
+  // ─── Wire events ───────────────────────────────────────
 
-    s.succeed(
-      `${color.green("Saved:")} ${result.filePath}  ${color.dim(`(${formatBytes(result.sizeBytes)}, ${formatDuration(result.duration)})`)}`,
-    );
+  downloader.on("start", (info: StreamInfo) => {
+    s.text = `Recording ${info.title}...`;
+  });
+
+  downloader.on("progress", (stats: DownloadStats) => {
+    s.text = `${formatBytes(stats.downloadedBytes)} @ ${formatSpeed(stats.speed)}  [${formatDuration(stats.duration)}]`;
+  });
+
+  downloader.on("complete", (results: DownloadResult[]) => {
+    for (const r of results) {
+      console.log(
+        `  ${color.green("Saved:")} ${r.filePath}  ${color.dim(`(${formatBytes(r.sizeBytes)}, ${formatDuration(r.duration)})`)}`,
+      );
+    }
+    const totalMB = results.reduce((sum, r) => sum + r.sizeMB, 0);
+    s.succeed(`Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
+  });
+
+  // ─── Start ──────────────────────────────────────────────
+
+  try {
+    await downloader.startRecording();
   } catch (error) {
+    if (error instanceof UserOfflineError) {
+      s.fail("User is not live. Use `watch` to wait for them to go live.");
+      process.exit(1);
+    }
     s.fail(String(error));
     throw error;
   } finally {
