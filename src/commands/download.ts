@@ -15,6 +15,36 @@ export async function executeDownload(
   username: string,
   options: DownloadCliOptions,
 ): Promise<void> {
+  console.error("Starting...");
+
+  // ─── SIGINT / SIGTERM (registered BEFORE any async work) ─────
+
+  const onSignal = async () => {
+    console.error("\nStopping...");
+    // Kill existing child processes before stop() so they don't interfere
+    try {
+      Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
+    } catch {}
+    await downloader.stop();
+    // stop() returns in ≤5s. The remux ffmpeg might still be converting
+    // the .ts → .mp4 (it has no abort signal). Wait up to 15s for it.
+    console.error("Remuxing... please wait.");
+    let dots = 0;
+    const interval = setInterval(() => {
+      console.error(".");
+      if (++dots >= 5) clearInterval(interval);
+    }, 3_000);
+    await new Promise((r) => setTimeout(r, 15_000));
+    clearInterval(interval);
+    // Kill any surviving child processes
+    try {
+      Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
+    } catch {}
+    process.exit(130);
+  };
+  process.on("SIGINT", onSignal);
+  process.on("SIGTERM", onSignal);
+
   // Kill orphan child processes from previous interrupted runs
   try {
     Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
@@ -52,24 +82,6 @@ export async function executeDownload(
     s.succeed(`Done — ${results.length} segment(s), ${totalMB.toFixed(1)}MB total`);
   });
 
-  // ─── SIGINT / SIGTERM ─────────────────────────────────
-
-  const onSignal = async () => {
-    console.error("\nStopping...");
-    await downloader.stop();
-    // stop() returns in ≤5s. The remux ffmpeg might still be converting
-    // the .ts → .mp4 (it has no abort signal). Wait up to 15s for it.
-    console.error("Remuxing... please wait.");
-    await new Promise((r) => setTimeout(r, 15_000));
-    // Kill any surviving child processes
-    try {
-      Bun.spawnSync(["pkill", "-9", "-P", String(process.pid)], {});
-    } catch {}
-    process.exit(130);
-  };
-  process.on("SIGINT", onSignal);
-  process.on("SIGTERM", onSignal);
-
   // ─── Start ──────────────────────────────────────────────
 
   try {
@@ -81,8 +93,5 @@ export async function executeDownload(
     }
     s.fail(String(error));
     throw error;
-  } finally {
-    process.off("SIGINT", onSignal);
-    process.off("SIGTERM", onSignal);
   }
 }
