@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.3] - 2026-06-07
+
+### Fixed
+
+- Upgrade tokwatchr to v0.6.5 — removes the 5-second timeout from
+  `stop()`, ensuring the last segment always finishes remuxing on
+  Ctrl+C instead of being killed mid-conversion
+
+[0.3.3]: https://github.com/zfadhli/tokwatchr-cli/compare/v0.3.2...v0.3.3
+
 ## [0.3.2] - 2026-06-07
 
 ### Fixed
