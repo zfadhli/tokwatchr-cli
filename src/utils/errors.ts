@@ -60,10 +60,7 @@ export function handleFatalError(error: unknown): never {
         console.error(pc.red("[error]"), `Download failed: ${error.message}`);
         break;
       case "FfmpegError":
-        console.error(
-          pc.red("[error]"),
-          `ffmpeg error: ${error.message}. Install ffmpeg or use --no-ffmpeg.`,
-        );
+        console.error(pc.red("[error]"), error.message);
         break;
       case "AbortError":
         console.error(pc.blue("[info]"), "Aborted.");
