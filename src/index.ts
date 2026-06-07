@@ -5,6 +5,7 @@ import { executeDownload } from "./commands/download";
 import { executeWatch } from "./commands/watch";
 import type { DownloadCliOptions, WatchCliOptions } from "./types";
 import { handleFatalError } from "./utils/errors";
+import { version } from "../package.json";
 
 // -------------------------------------------------------
 // Program
@@ -60,5 +61,5 @@ cli
 // Parse
 // -------------------------------------------------------
 cli.help();
-cli.version("0.1.0");
+cli.version(version);
 cli.parse();
