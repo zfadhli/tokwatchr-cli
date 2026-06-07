@@ -13,10 +13,7 @@ import { formatBytes, formatDuration, formatSpeed } from "../utils/format";
 export async function executeWatch(username: string, options: WatchCliOptions): Promise<void> {
   // ─── SIGINT / SIGTERM (registered BEFORE any async work) ─────
 
-  let sigintHandled = false;
-
   const onSignal = async () => {
-    sigintHandled = true;
     console.log(`\n\n  ${pc.red(`Stopping...`)}`);
     await downloader.stop();
     process.exit(0);
@@ -95,10 +92,6 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
       // Continue watching for the next one.
       console.log(`\n  ${pc.dim("Stream ended, watching for next...")}`);
     } catch (error) {
-      if (sigintHandled) {
-        // SIGINT handler is managing shutdown — don't double-exit
-        return;
-      }
       if (error instanceof UserNotFoundError) {
         console.error(pc.red("[error]"), "User not found. Check the username and try again.");
         process.exit(1);
