@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.2] - 2026-06-07
+
+### Fixed
+
+- CLI `--version` now reads from `package.json` instead of a hardcoded
+  string — previously always showed `0.1.0` regardless of the published
+  version
+
+[0.3.2]: https://github.com/zfadhli/tokwatchr-cli/compare/v0.3.1...v0.3.2
+
 ## [0.3.1] - 2026-06-07
 
 ### Changed
