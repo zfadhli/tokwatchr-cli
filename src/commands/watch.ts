@@ -100,11 +100,13 @@ export async function executeWatch(username: string, options: WatchCliOptions): 
         return;
       }
       if (error instanceof UserNotFoundError) {
-        console.error(pc.red("✖"), "User not found. Check the username and try again.");
+        console.error(pc.red("[error]"), "User not found. Check the username and try again.");
         process.exit(1);
       }
-      console.error(pc.red("✖"), String(error));
-      throw error;
+      // Transient error (timeout, network) during waiting phase — retry
+      console.error(`\n  ${pc.yellow(`[warning] ${error}`)}`);
+      await new Promise((r) => setTimeout(r, 10_000));
+      console.log(`  ${pc.dim("Retrying...")}`);
     }
   }
 }
