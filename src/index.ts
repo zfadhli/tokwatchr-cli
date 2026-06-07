@@ -1,11 +1,11 @@
 #! /usr/bin/env node
 
 import { cac } from "cac";
+import { version } from "../package.json";
 import { executeDownload } from "./commands/download";
 import { executeWatch } from "./commands/watch";
 import type { DownloadCliOptions, WatchCliOptions } from "./types";
 import { handleFatalError } from "./utils/errors";
-import { version } from "../package.json";
 
 // -------------------------------------------------------
 // Program
