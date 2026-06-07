@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 
 import { cac } from "cac";
+import { version } from "../package.json";
 import { executeDownload } from "./commands/download";
 import { executeWatch } from "./commands/watch";
 import type { DownloadCliOptions, WatchCliOptions } from "./types";
@@ -60,5 +61,5 @@ cli
 // Parse
 // -------------------------------------------------------
 cli.help();
-cli.version("0.1.0");
+cli.version(version);
 cli.parse();
