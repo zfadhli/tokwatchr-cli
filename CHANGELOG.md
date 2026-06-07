@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.1] - 2026-06-07
+
+### Changed
+
+- Upgrade tokwatchr from v0.6.3 to v0.6.4 — fixes abort controller not
+  being reset between `start()` calls, enabling persistent watch loop
+
+[0.3.1]: https://github.com/zfadhli/tokwatchr-cli/compare/v0.3.0...v0.3.1
+
 ## [0.3.0] - 2026-06-07
 
 ### Added
